@@ -105,9 +105,16 @@
   border-radius: 20px;
 }
 
-.Bacon {
-  width: 80%;
-  height: 3%;
+.Tomatoe {
+  width: 70%;
+  height: 6%;
   background: linear-gradient(#bf3813, #c45e38);
+  margin: 2% auto;
+}
+
+.Onion {
+  width: 70%;
+  height: 6%;
+  background: linear-gradient(#c9c9c9, #c9c9ff);
   margin: 2% auto;
 }
