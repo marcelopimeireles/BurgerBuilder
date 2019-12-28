@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import Aux from '../../hoc/Aux';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
+import Modal from '../../components/UI/Modal/Modal';
+import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 
 const INGREDIENT_PRICES = {
   salad: 0.4,
@@ -21,17 +23,21 @@ class BurgerBuider extends Component {
       cheese: 0,
       meat: 0
     },
-    totalPrice: 4
+    totalPrice: 4,
+    purchasable: false
   }
 
-  addIngredientHandler = (type) => {
-    this.updateIngredient(type, true);
+  updatePurchaseState (ingredients) {
+    const sum = Object.keys(ingredients)
+      .map(igKey => {
+        return ingredients[igKey];
+      })
+      .reduce((sum, el) => {
+        return sum + el;
+      }, 0);
+    this.setState({purchasable: sum > 0});
   }
-
-  removeIngredientHandler = (type) => {
-    this.updateIngredient(type, false);
-  }
-
+  
   updateIngredient(type, add) {
     const oldCount = this.state.ingredients[type];
     if (oldCount <= 0 && !add) return;
@@ -44,6 +50,15 @@ class BurgerBuider extends Component {
     const oldPrice = this.state.totalPrice;
     const newPrice = add ? oldPrice + priceDelta : oldPrice - priceDelta;
     this.setState({totalPrice: newPrice, ingredients: updatedIngredients});
+    this.updatePurchaseState(updatedIngredients);
+  }
+
+  addIngredientHandler = (type) => {
+    this.updateIngredient(type, true);
+  }
+
+  removeIngredientHandler = (type) => {
+    this.updateIngredient(type, false);
   }
 
   render() {
@@ -56,11 +71,15 @@ class BurgerBuider extends Component {
     return (
       <Aux>
         <div>
+          <Modal>
+            <OrderSummary ingredients={this.state.ingredients}/>
+          </Modal>
           <Burger ingredients={this.state.ingredients} />
           <BuildControls 
             ingredientAdded={this.addIngredientHandler}
             ingredientRemoved={this.removeIngredientHandler}
             disabled={disabledInfo}
+            purchasable={this.state.purchasable}
             price={this.state.totalPrice}
              />
         </div>
